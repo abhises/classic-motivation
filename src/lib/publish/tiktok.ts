@@ -1,6 +1,6 @@
 import { createHash, createHmac } from "node:crypto";
 import fs from "node:fs";
-import { APP_URL } from "../paths";
+import { oauthRedirectUri } from "../paths";
 import { getConnection, saveConnection, type Connection } from "../store";
 import type { Plan } from "../types";
 import { ApiError, fetchJson, form, sleep } from "./http";
@@ -8,7 +8,7 @@ import { ApiError, fetchJson, form, sleep } from "./http";
 const API = "https://open.tiktokapis.com/v2";
 const MB = 1024 * 1024;
 
-export const redirectUri = () => `${APP_URL}/api/auth/tiktok/callback`;
+export const redirectUri = () => oauthRedirectUri("tiktok");
 export const configured = () => !!(process.env.TIKTOK_CLIENT_KEY && process.env.TIKTOK_CLIENT_SECRET);
 
 // PKCE: the verifier is derived from the OAuth state, so the callback can rebuild it without storing anything.

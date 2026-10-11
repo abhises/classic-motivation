@@ -44,6 +44,14 @@ Each platform needs a developer app you create once. The Accounts page shows the
 > Videos uploaded from an **unverified** API project stay private until Google audits the project.
 > The default quota (10,000 units/day) allows about 6 uploads a day.
 
+### OAuth relay (permanent https redirect URI, no tunnel)
+Instagram and TikTok only accept **https** redirect URIs, and a quick tunnel gets a new URL on every run. Instead,
+publish `docs/` with GitHub Pages and set `OAUTH_RELAY_URL=https://<user>.github.io/<repo>/oauth`. The redirect URIs
+to register become `OAUTH_RELAY_URL/instagram.html` and `OAUTH_RELAY_URL/tiktok.html`; those pages forward the
+browser to `http://localhost:<port>/api/auth/<platform>/callback`. YouTube keeps using
+`http://localhost:<port>/api/auth/youtube/callback`. Open the studio on `http://localhost:<port>` when you connect
+an account, because the login cookie is set for that address.
+
 ### Instagram (Reels)
 1. The Instagram account must be **Business** or **Creator**.
 2. [developers.facebook.com](https://developers.facebook.com/) → Create app → add the **Instagram** product →

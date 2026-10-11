@@ -1,5 +1,5 @@
 import fs from "node:fs";
-import { APP_URL } from "../paths";
+import { oauthRedirectUri } from "../paths";
 import { getConnection, saveConnection, type Connection } from "../store";
 import type { Plan } from "../types";
 import { ApiError, fetchJson, form } from "./http";
@@ -10,7 +10,7 @@ const SCOPES = [
   "https://www.googleapis.com/auth/youtube.readonly",
 ];
 
-export const redirectUri = () => `${APP_URL}/api/auth/youtube/callback`;
+export const redirectUri = () => oauthRedirectUri("youtube");
 export const configured = () => !!(process.env.GOOGLE_CLIENT_ID && process.env.GOOGLE_CLIENT_SECRET);
 
 export function authUrl(state: string) {

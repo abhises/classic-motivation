@@ -1,5 +1,5 @@
 import fs from "node:fs";
-import { APP_URL } from "../paths";
+import { oauthRedirectUri } from "../paths";
 import { getConnection, saveConnection, type Connection } from "../store";
 import type { Plan } from "../types";
 import { ApiError, fetchJson, form, sleep } from "./http";
@@ -8,7 +8,7 @@ import { ApiError, fetchJson, form, sleep } from "./http";
 const V = process.env.IG_GRAPH_VERSION || "v23.0";
 const GRAPH = `https://graph.instagram.com/${V}`;
 
-export const redirectUri = () => `${APP_URL}/api/auth/instagram/callback`;
+export const redirectUri = () => oauthRedirectUri("instagram");
 export const configured = () => !!(process.env.INSTAGRAM_APP_ID && process.env.INSTAGRAM_APP_SECRET);
 
 export function authUrl(state: string) {
