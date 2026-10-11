@@ -39,3 +39,7 @@ yarn-error.log*
 # typescript
 *.tsbuildinfo
 next-env.d.ts
+
+# studio runtime data (tokens, jobs, settings)
+/data
+!.env.example
