@@ -106,16 +106,24 @@ export async function publish(
 
   // 2. wait for Instagram to process the video
   onStatus("processing", "Instagram is processing the video");
-  for (let i = 0; ; i++) {
-    const st = await fetchJson<{ status_code: string; status?: string }>(
-      `${GRAPH}/${container.id}?fields=status_code,status&access_token=${encodeURIComponent(token)}`,
-    );
+  //    Poll slowly: the app's request quota is small, and a rate-limited poll must not abandon the container.
+  const deadline = Date.now() + 15 * 60_000;
+  for (;;) {
+    await sleep(15_000);
+    let st: { status_code: string; status?: string };
+    try {
+      st = await fetchJson(`${GRAPH}/${container.id}?fields=status_code,status&access_token=${encodeURIComponent(token)}`);
+    } catch (e) {
+      if (!/request limit reached|"code":4\b/i.test(String(e)) || Date.now() > deadline) throw e;
+      onStatus("processing", "Instagram rate limit reached - waiting a minute before checking again");
+      await sleep(60_000);
+      continue;
+    }
     if (st.status_code === "FINISHED") break;
     if (st.status_code === "ERROR" || st.status_code === "EXPIRED") {
       throw new ApiError(`Instagram processing failed: ${st.status ?? st.status_code}`);
     }
-    if (i > 60) throw new ApiError("Instagram processing timed out");
-    await sleep(5000);
+    if (Date.now() > deadline) throw new ApiError("Instagram processing timed out");
   }
 
   // 3. publish
